@@ -58,4 +58,16 @@ export default class API {
 
     throw Error(data.e);
   };
+
+  signout = async (email, password) => {
+    const res = await this.ajax("/api/signout", {
+      method: "POST",
+    });
+    const data = await res.json();
+    if (data.success == true) {
+      return true;
+    }
+
+    throw Error(data.e);
+  };
 }

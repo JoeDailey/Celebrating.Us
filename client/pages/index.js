@@ -1,4 +1,5 @@
 import API from "../lib/API";
+import LogOutButton from "../components/LogOutButton";
 
 export default class Index extends React.Component {
   static async getInitialProps(context, props) {
@@ -11,6 +12,7 @@ export default class Index extends React.Component {
       <div>
         <p>{`Hello ${this.props.user.display_name}!`}</p>
         <p>{`Your email is \`${this.props.user.email}\`.`}</p>
+        <LogOutButton />
       </div>
     );
   };

@@ -64,6 +64,16 @@ class AuthAccess {
       }
     ];
   }
+
+  destroySession(cookie) {
+    if (!cookie) {
+      throw new Error('Cannot log out. No authentication cookie.')
+    }
+
+    const { email, token } = JSON.parse(cookie);
+    const timenow = Date.now();
+    const session = Q.LOGOUT.run({ email, token, timenow });
+  }
 }
 
 const DB_DEST = path.join(__dirname, "../data.sqlite");
@@ -85,7 +95,7 @@ const Q = {
       display_name,
       email
     FROM users
-    WHERE email=@email
+    WHERE email=@email;
   `),
   ATTEMPT: DB.prepare(`
     SELECT
@@ -94,12 +104,17 @@ const Q = {
     FROM users
     WHERE
       email=@email AND
-      password_hash=@password_hash
+      password_hash=@password_hash;
   `),
   LOGIN: DB.prepare(`
     INSERT INTO sessions (token, email, exp_date) VALUES (
       @token, @email, @expiration
     );
+  `),
+  LOGOUT: DB.prepare(`
+    UPDATE sessions
+    SET exp_date=@timenow
+    WHERE token=@token AND email=@email;
   `)
 };
 

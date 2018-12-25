@@ -9593,43 +9593,59 @@ var API = function API(context) {
     };
   }());
 
+  _defineProperty(this, "signout",
+  /*#__PURE__*/
+  function () {
+    var _ref4 = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(email, password) {
+      var res, data;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              _context4.next = 2;
+              return _this.ajax("/api/signout", {
+                method: "POST"
+              });
+
+            case 2:
+              res = _context4.sent;
+              _context4.next = 5;
+              return res.json();
+
+            case 5:
+              data = _context4.sent;
+
+              if (!(data.success == true)) {
+                _context4.next = 8;
+                break;
+              }
+
+              return _context4.abrupt("return", true);
+
+            case 8:
+              throw Error(data.e);
+
+            case 9:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4, this);
+    }));
+
+    return function (_x3, _x4) {
+      return _ref4.apply(this, arguments);
+    };
+  }());
+
   this.context = context;
 
   if (context && context.req) {
     var req = context.req;
     var baseUrl = "".concat(req.protocol, "://").concat(req.get("Host"));
 
-    this.ajax =
-    /*#__PURE__*/
-    function () {
-      var _ref4 = _asyncToGenerator(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(path, conf) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                if (path.indexOf("?") > -1) {
-                  path += "&user_token=".concat(req.cookies[COOKIE]);
-                } else {
-                  path += "?user_token=".concat(req.cookies[COOKIE]);
-                }
-
-                return _context4.abrupt("return", cross_fetch__WEBPACK_IMPORTED_MODULE_2___default()(baseUrl + path, conf));
-
-              case 2:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this);
-      }));
-
-      return function (_x3, _x4) {
-        return _ref4.apply(this, arguments);
-      };
-    }();
-  } else {
     this.ajax =
     /*#__PURE__*/
     function () {
@@ -9640,11 +9656,15 @@ var API = function API(context) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                return _context5.abrupt("return", cross_fetch__WEBPACK_IMPORTED_MODULE_2___default()(path, Object.assign(conf || {}, {
-                  credentials: "same-origin"
-                })));
+                if (path.indexOf("?") > -1) {
+                  path += "&user_token=".concat(req.cookies[COOKIE]);
+                } else {
+                  path += "?user_token=".concat(req.cookies[COOKIE]);
+                }
 
-              case 1:
+                return _context5.abrupt("return", cross_fetch__WEBPACK_IMPORTED_MODULE_2___default()(baseUrl + path, conf));
+
+              case 2:
               case "end":
                 return _context5.stop();
             }
@@ -9654,6 +9674,33 @@ var API = function API(context) {
 
       return function (_x5, _x6) {
         return _ref5.apply(this, arguments);
+      };
+    }();
+  } else {
+    this.ajax =
+    /*#__PURE__*/
+    function () {
+      var _ref6 = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6(path, conf) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                return _context6.abrupt("return", cross_fetch__WEBPACK_IMPORTED_MODULE_2___default()(path, Object.assign(conf || {}, {
+                  credentials: "same-origin"
+                })));
+
+              case 1:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6, this);
+      }));
+
+      return function (_x7, _x8) {
+        return _ref6.apply(this, arguments);
       };
     }();
   }

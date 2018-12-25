@@ -21,6 +21,7 @@ nextClient.prepare().then(() => {
   const authAccess = new AuthAccess();
   server.expose("/api", require("./api/get.self")(r, authAccess));
   server.expose("/api", require("./api/post.signin")(r, authAccess));
+  server.expose("/api", require("./api/post.signout")(r, authAccess));
 
   server.get("*", ...authAccess.gate(), nextClient.getRequestHandler());
 
