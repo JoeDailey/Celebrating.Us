@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "better-sqlite3": "^5.2.1",
+    "body-parser": "^1.18.3",
     "cookie": "^0.3.1",
     "cookie-parser": "^1.4.3",
     "cross-fetch": "^3.0.0",
@@ -13,9 +14,7 @@
     "react-dom": "^16.7.0"
   },
   "scripts": {
-    "dev:client": "next ./client",
-    "dev:server": "node ./server/api.js",
-    "dev": "npm-run-all --parallel dev:*"
+    "dev": "nodemon ./server/server.js"
   },
   "devDependencies": {
     "nodemon": "^1.18.9",
