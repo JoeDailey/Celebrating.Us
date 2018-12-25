@@ -9451,8 +9451,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return API; });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var cross_fetch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! cross-fetch */ "../node_modules/cross-fetch/dist/browser-ponyfill.js");
-/* harmony import */ var cross_fetch__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(cross_fetch__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _lib_redirect__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../lib/redirect */ "./lib/redirect.js");
+/* harmony import */ var cross_fetch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! cross-fetch */ "../node_modules/cross-fetch/dist/browser-ponyfill.js");
+/* harmony import */ var cross_fetch__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(cross_fetch__WEBPACK_IMPORTED_MODULE_2__);
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -9464,6 +9465,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
+
 var COOKIE = "user_token";
 
 var API = function API(context) {
@@ -9471,31 +9473,34 @@ var API = function API(context) {
 
   _classCallCheck(this, API);
 
+  _defineProperty(this, "context", void 0);
+
   _defineProperty(this, "ajax", void 0);
 
-  _defineProperty(this, "loggedInUser",
+  _defineProperty(this, "gate",
   /*#__PURE__*/
   _asyncToGenerator(
   /*#__PURE__*/
   _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-    var res, data;
+    var user;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             _context.next = 2;
-            return _this.ajax("/api/self/");
+            return _this.loggedInUser();
 
           case 2:
-            res = _context.sent;
-            _context.next = 5;
-            return res.json();
+            user = _context.sent;
+
+            if (!user) {
+              // If not signed in, send them somewhere more useful
+              Object(_lib_redirect__WEBPACK_IMPORTED_MODULE_1__["default"])(_this.context, "/signin");
+            }
+
+            return _context.abrupt("return", user);
 
           case 5:
-            data = _context.sent;
-            return _context.abrupt("return", data.user == null ? null : data.user);
-
-          case 7:
           case "end":
             return _context.stop();
         }
@@ -9503,18 +9508,48 @@ var API = function API(context) {
     }, _callee, this);
   })));
 
+  _defineProperty(this, "loggedInUser",
+  /*#__PURE__*/
+  _asyncToGenerator(
+  /*#__PURE__*/
+  _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+    var res, data;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return _this.ajax("/api/self/");
+
+          case 2:
+            res = _context2.sent;
+            _context2.next = 5;
+            return res.json();
+
+          case 5:
+            data = _context2.sent;
+            return _context2.abrupt("return", data.user == null ? null : data.user);
+
+          case 7:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2, this);
+  })));
+
   _defineProperty(this, "signin",
   /*#__PURE__*/
   function () {
-    var _ref2 = _asyncToGenerator(
+    var _ref3 = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(email, password) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(email, password) {
       var res, data;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
         while (1) {
-          switch (_context2.prev = _context2.next) {
+          switch (_context3.prev = _context3.next) {
             case 0:
-              _context2.next = 2;
+              _context3.next = 2;
               return _this.ajax("/api/signin", {
                 method: "POST",
                 headers: {
@@ -9528,71 +9563,42 @@ var API = function API(context) {
               });
 
             case 2:
-              res = _context2.sent;
-              _context2.next = 5;
+              res = _context3.sent;
+              _context3.next = 5;
               return res.json();
 
             case 5:
-              data = _context2.sent;
+              data = _context3.sent;
 
               if (!(data.success == true)) {
-                _context2.next = 8;
+                _context3.next = 8;
                 break;
               }
 
-              return _context2.abrupt("return", true);
+              return _context3.abrupt("return", true);
 
             case 8:
               throw Error(data.e);
 
             case 9:
             case "end":
-              return _context2.stop();
+              return _context3.stop();
           }
         }
-      }, _callee2, this);
+      }, _callee3, this);
     }));
 
     return function (_x, _x2) {
-      return _ref2.apply(this, arguments);
+      return _ref3.apply(this, arguments);
     };
   }());
+
+  this.context = context;
 
   if (context && context.req) {
     var req = context.req;
     var baseUrl = "".concat(req.protocol, "://").concat(req.get("Host"));
 
-    this.ajax =
-    /*#__PURE__*/
-    function () {
-      var _ref3 = _asyncToGenerator(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(path, conf) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                if (path.indexOf("?") > -1) {
-                  path += "&user_token=".concat(req.cookies[COOKIE]);
-                } else {
-                  path += "?user_token=".concat(req.cookies[COOKIE]);
-                }
-
-                return _context3.abrupt("return", cross_fetch__WEBPACK_IMPORTED_MODULE_1___default()(baseUrl + path, conf));
-
-              case 2:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this);
-      }));
-
-      return function (_x3, _x4) {
-        return _ref3.apply(this, arguments);
-      };
-    }();
-  } else {
     this.ajax =
     /*#__PURE__*/
     function () {
@@ -9603,11 +9609,15 @@ var API = function API(context) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                return _context4.abrupt("return", cross_fetch__WEBPACK_IMPORTED_MODULE_1___default()(path, Object.assign(conf || {}, {
-                  credentials: "same-origin"
-                })));
+                if (path.indexOf("?") > -1) {
+                  path += "&user_token=".concat(req.cookies[COOKIE]);
+                } else {
+                  path += "?user_token=".concat(req.cookies[COOKIE]);
+                }
 
-              case 1:
+                return _context4.abrupt("return", cross_fetch__WEBPACK_IMPORTED_MODULE_2___default()(baseUrl + path, conf));
+
+              case 2:
               case "end":
                 return _context4.stop();
             }
@@ -9615,8 +9625,35 @@ var API = function API(context) {
         }, _callee4, this);
       }));
 
-      return function (_x5, _x6) {
+      return function (_x3, _x4) {
         return _ref4.apply(this, arguments);
+      };
+    }();
+  } else {
+    this.ajax =
+    /*#__PURE__*/
+    function () {
+      var _ref5 = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(path, conf) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                return _context5.abrupt("return", cross_fetch__WEBPACK_IMPORTED_MODULE_2___default()(path, Object.assign(conf || {}, {
+                  credentials: "same-origin"
+                })));
+
+              case 1:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5, this);
+      }));
+
+      return function (_x5, _x6) {
+        return _ref5.apply(this, arguments);
       };
     }();
   }
@@ -9757,7 +9794,7 @@ function (_React$Component) {
 
 /***/ }),
 
-/***/ 4:
+/***/ 3:
 /*!*******************************!*\
   !*** multi ./pages/signin.js ***!
   \*******************************/
@@ -9782,5 +9819,5 @@ module.exports = dll_08fa50bc85c03b576e51;
 
 /***/ })
 
-},[[4,"static/runtime/webpack.js"]]]));;
+},[[3,"static/runtime/webpack.js"]]]));;
 //# sourceMappingURL=signin.js.map

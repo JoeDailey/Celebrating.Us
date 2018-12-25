@@ -6,6 +6,7 @@ const sqlite = require("better-sqlite3");
 
 const SESSION_LENGTH = 60 * 60 * 3; // seconds (3 hours)
 const COOKIE = "user_token";
+const WHITELISTED_ROUTES = [/\/signin/, /\/_next/];
 
 class AuthAccess {
   loggedInUser(cookie) {
@@ -44,6 +45,25 @@ class AuthAccess {
       }
     ];
   }
+
+  gate() {
+    return [
+      cookieParser(),
+      (req, res, next) => {
+        for (const route of WHITELISTED_ROUTES) {
+          if (req.path.match(route)) {
+            return next();
+          }
+        }
+
+        if (this.loggedInUser(req.cookies[COOKIE] || req.query[COOKIE])) {
+          return next();
+        }
+
+        res.redirect("/signin");
+      }
+    ];
+  }
 }
 
 const DB_DEST = path.join(__dirname, "../data.sqlite");
@@ -52,7 +72,6 @@ if (fs.existsSync(DB_DEST) === false) {
 }
 
 const DB = sqlite(DB_DEST);
-
 const Q = {
   SESSION: DB.prepare(`
     SELECT * FROM sessions

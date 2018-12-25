@@ -1,15 +1,8 @@
-import redirect from "../lib/redirect";
 import API from "../lib/API";
 
 export default class Index extends React.Component {
   static async getInitialProps(context, props) {
-    const user = await new API(context).loggedInUser();
-    console.log({user});
-    if (!user) {
-      // If not signed in, send them somewhere more useful
-      redirect(context, "/signin");
-    }
-
+    const user = await new API(context).gate();
     return { user };
   }
 

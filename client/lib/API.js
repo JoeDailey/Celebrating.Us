@@ -1,11 +1,14 @@
+import redirect from "../lib/redirect";
 import fetch from "cross-fetch";
 
 const COOKIE = "user_token";
 
 export default class API {
+  context;
   ajax;
 
   constructor(context) {
+    this.context = context;
     if (context && context.req) {
       const { req } = context;
       const baseUrl = `${req.protocol}://${req.get("Host")}`;
@@ -22,6 +25,16 @@ export default class API {
         fetch(path, Object.assign(conf || {}, { credentials: "same-origin" }));
     }
   }
+
+  gate = async () => {
+    const user = await this.loggedInUser();
+    if (!user) {
+      // If not signed in, send them somewhere more useful
+      redirect(this.context, "/signin");
+    }
+
+    return user;
+  };
 
   loggedInUser = async () => {
     const res = await this.ajax(`/api/self/`);

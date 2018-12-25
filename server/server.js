@@ -22,35 +22,10 @@ nextClient.prepare().then(() => {
   server.expose("/api", require("./api/get.self")(r, authAccess));
   server.expose("/api", require("./api/post.signin")(r, authAccess));
 
-  server.get("*", ...requireAuth(authAccess), nextClient.getRequestHandler());
+  server.get("*", ...authAccess.gate(), nextClient.getRequestHandler());
 
   server.listen(PORT, err => {
     if (err) throw err;
     console.log(`> Celebrating Us API listening on port ${PORT}!`);
   });
 });
-
-const WHITELISTED_ROUTES = [
-  /\/signin/,
-  /\/_next/,
-];
-const COOKIE = "user_token";
-function requireAuth(authAccess) {
-  return [
-    cookieParser(),
-    (req, res, next) => {
-      console.log(req.path, WHITELISTED_ROUTES.indexOf(req.path));
-      for (const route of WHITELISTED_ROUTES) {
-        if (req.path.match()) {
-          return next();
-        }
-      }
-
-      if (authAccess.loggedInUser(req.cookies[COOKIE] || req.query[COOKIE])) {
-        return next();
-      }
-
-      res.redirect("/signin");
-    }
-  ];
-}
